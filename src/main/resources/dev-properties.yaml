@@ -1,0 +1,11 @@
+https:
+  timeout: "60000"
+  
+api:
+  id: "20213412"
+
+tls:
+  keystore:
+    type: "pkcs12"
+    path: "certs/check-in-papi-dev.p12"
+    alias: "server"

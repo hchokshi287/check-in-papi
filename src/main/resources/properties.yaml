@@ -1,0 +1,11 @@
+https:
+  port: "8081"
+  timeout: "30000"
+  
+api:
+  groupId: "${api.groupId}"
+  artifactId: "${api.artifactId}"
+  version: "${api.version}"
+  spec: "resource::${api.groupId}:${api.artifactId}:${api.version}:${api.classifier}:${api.type}:${api.root}"
+  majorVersion: "v1"
+  

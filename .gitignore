@@ -1,0 +1,83 @@
+# MuleSoft/Anypoint Studio specific
+.metadata/
+.mule/
+.studio/
+*.log
+velocity.log*
+
+# Maven
+target/
+dependency-reduced-pom.xml
+
+# IDEs
+.settings/
+.project
+.classpath
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+temp/
+*.tmp
+*.temp
+*.swp
+*~
+
+# Secure properties (contains sensitive information)
+*-properties-secure.yaml
+*-secure.yaml
+
+# Certificates and keys (security)
+*.p12
+*.jks
+*.keystore
+*.truststore
+*.pem
+*.key
+*.crt
+certs/
+
+# Build artifacts
+*.jar
+*.war
+*.zip
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# MUnit test results
+.munit/
+
+# Exchange documentation artifacts
+exchange-docs/
+
+# Reports (can be regenerated)
+reports/
+
+# Node modules (if any frontend components)
+node_modules/
+
+# Environment specific files that might contain secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Application specific
+application-*.properties
+*-local.properties

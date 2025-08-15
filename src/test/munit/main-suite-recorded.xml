@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="main-suite-recorded.xml" />
+	<munit:test name="check-in-by-pnr-test" doc:id="a225c011-3979-4048-bf46-3812e5420555" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock register-passenger-data" doc:id="c70220a5-91c7-4ca5-b7d0-c69057c327c2" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2ae99888-a1c0-4145-a558-16883d1b7628" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://checkinbypnrtest\mock_payload.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://checkinbypnrtest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://checkinbypnrtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="PNR" value="#[output application/java --- readUrl('classpath://checkinbypnrtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="checkInPayload" value="#[output application/json --- readUrl('classpath://checkinbypnrtest\mock_variable_2.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock create-payment-for-bags" doc:id="dce06352-33d6-458a-b2d4-13bc09f1ee85" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b29052e8-a456-4898-8bf7-aff5574bf9f2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://checkinbypnrtest\mock_payload1.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://checkinbypnrtest\mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://checkinbypnrtest\mock_variable_3.dwl')]" />
+						<munit-tools:variable key="PNR" value="#[output application/java --- readUrl('classpath://checkinbypnrtest\mock_variable_4.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="checkInPayload" value="#[output application/json --- readUrl('classpath://checkinbypnrtest\mock_variable_5.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy check-in-flights-management" doc:id="57b19e55-436b-408f-b175-58257a6b5ce6" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c561ea3d-1741-4f51-b83a-0eb070d9fe95" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="15195b71-de06-48a2-9ce3-075900cff428" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import checkinbypnrtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="4f02ae57-84b3-425e-a0aa-c7003c3187dc" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import checkinbypnrtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="5437b6d3-5f7b-4a59-90fc-b6d7f437bb6b" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://checkinbypnrtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://checkinbypnrtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://checkinbypnrtest\set-event_variable_.dwl')]" />
+					<munit:variable key="PNR" value="#[output application/java --- readUrl('classpath://checkinbypnrtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to check-in-by-pnr" doc:id="99c97997-006a-4ad0-a027-c9a4178b52cc" name="check-in-by-pnr"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="c6c379f6-8bdc-4ccf-ba5b-b15f2e2d4b09" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import checkinbypnrtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify set-logging-vars" doc:id="d08125b7-1979-4a21-875d-5f6f97512599" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="68fabc49-e244-413d-9a3c-0fcfed881325" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify check-in-flights-management" doc:id="d10f1d13-5f10-4734-bec8-f60b88c18dea" processor="flow-ref" times="1">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="c561ea3d-1741-4f51-b83a-0eb070d9fe95" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="91c5b935-bd83-48bc-8870-1048460013b8" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="24f8bf94-1932-4603-9b0b-82f8fed1d1bb" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
