@@ -1,0 +1,11 @@
+lastName,numBags,pnr,paymentApproved
+Smith,2,928382J,true
+Johnson,1,123456A,true
+Williams,3,789012B,false
+Brown,0,345678C,true
+Davis,4,901234D,true
+Miller,1,567890E,false
+Wilson,2,234567F,true
+Moore,3,890123G,true
+Taylor,1,456789H,false
+Anderson,2,012345I,true

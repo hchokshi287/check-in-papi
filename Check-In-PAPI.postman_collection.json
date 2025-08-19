@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "check-in-papi-collection",
+		"name": "Check-In PAPI",
+		"description": "Postman collection for Check-In Passenger API (PAPI) endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Check-In by PNR",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"lastName\": \"Smith\",\n  \"numBags\": 2,\n  \"payerID\": \"PAYER123456\",\n  \"paymentID\": \"PAY-1AKD7482FAB9STATKO\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/tickets/{{PNR}}/checkin",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tickets",
+						"{{PNR}}",
+						"checkin"
+					]
+				},
+				"description": "Check-in a passenger using their PNR (Passenger Name Record). This endpoint processes the check-in request and returns a payment ID for baggage fees."
+			},
+			"response": [
+				{
+					"name": "Successful Check-In",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lastName\": \"Smith\",\n  \"numBags\": 2,\n  \"payerID\": \"PAYER123456\",\n  \"paymentID\": \"PAY-1AKD7482FAB9STATKO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tickets/928382J/checkin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tickets",
+								"928382J",
+								"checkin"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"paymentID\": \"PAY-1AKD7482FAB9STATKO\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Payment Approval by PNR",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"paymentApproved\": true,\n  \"payerID\": \"PAYER123456\",\n  \"paymentID\": \"PAY-1AKD7482FAB9STATKO\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/tickets/{{PNR}}/paymentApproval",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tickets",
+						"{{PNR}}",
+						"paymentApproval"
+					]
+				},
+				"description": "Approve payment for a passenger using their PNR. This endpoint returns flight and passenger information after payment approval."
+			},
+			"response": [
+				{
+					"name": "Successful Payment Approval",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentApproved\": true,\n  \"payerID\": \"PAYER123456\",\n  \"paymentID\": \"PAY-1AKD7482FAB9STATKO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/tickets/928382J/paymentApproval",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tickets",
+								"928382J",
+								"paymentApproval"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"lastName\": \"Smith\",\n  \"flightDate\": \"2019-02-14\",\n  \"depart\": \"14:30:00\",\n  \"boarding\": \"13:15:00\",\n  \"gate\": \"4A\",\n  \"flight\": \"ANY6584\",\n  \"airportDepart\": \"ATL\",\n  \"airportArrive\": \"SFO\",\n  \"class\": \"Economy\",\n  \"seat\": \"16C\",\n  \"bagsCount\": 2,\n  \"PNR\": \"928382J\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "PNR",
+			"value": "928382J",
+			"type": "string"
+		}
+	]
+}
