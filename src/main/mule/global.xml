@@ -15,7 +15,7 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 		<http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS" tlsContext="apiTLSContext"
 			readTimeout="${https.timeout}" />
 	</http:listener-config>
-	<apikit:config name="apiConfig" api="${api.spec}" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<apikit:config name="apiConfig" api="api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<tls:context name="apiTLSContext" doc:name="TLS Context" doc:id="79bd4993-f975-4bae-91f8-b2ca14a4d7db">
 		<tls:key-store type="${tls.keystore.type}" path="${tls.keystore.path}" alias="${tls.keystore.alias}"
 			keyPassword="${secure::tls.keystore.keyPassword}" password="${secure::tls.keystore.password}" />

@@ -1,0 +1,450 @@
+#%RAML 1.0
+title: Check-in API
+version: v1
+description: |
+  This API provides check-in functionality for airline passengers using their PNR (Passenger Name Record).
+  It allows passengers to check-in for their flights and process payments for additional services like baggage fees.
+
+baseUri: https://localhost:8081/api/v1
+protocols: [HTTPS]
+
+mediaType: application/json
+
+securitySchemes:
+  basicAuth:
+    description: |
+      Basic authentication is required for all API endpoints.
+    type: Basic Authentication
+
+securedBy: [basicAuth]
+
+types:
+  CheckInRequest:
+    type: object
+    properties:
+      lastName:
+        type: string
+        required: true
+        description: Passenger's last name
+        example: "Smith"
+      firstName:
+        type: string
+        required: true
+        description: Passenger's first name
+        example: "John"
+      email:
+        type: string
+        required: true
+        description: Passenger's email address
+        example: "john.smith@email.com"
+      phone:
+        type: string
+        required: true
+        description: Passenger's phone number
+        example: "+1-555-123-4567"
+      flightNumber:
+        type: string
+        required: true
+        description: Flight number
+        example: "AA1234"
+      departureDate:
+        type: string
+        required: true
+        description: Flight departure date (YYYY-MM-DD format)
+        example: "2024-03-15"
+      departureTime:
+        type: string
+        pattern: ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$
+        required: true
+        description: Flight departure time in HH:MM:SS format
+        example: "14:30:00"
+      departureAirport:
+        type: string
+        minLength: 3
+        maxLength: 3
+        required: true
+        description: Departure airport code (IATA)
+        example: "ATL"
+      arrivalAirport:
+        type: string
+        minLength: 3
+        maxLength: 3
+        required: true
+        description: Arrival airport code (IATA)
+        example: "SFO"
+      seatClass:
+        type: string
+        enum: [Economy, Premium, Business, First]
+        required: true
+        description: Seat class
+        example: "Economy"
+      numBags:
+        type: integer
+        minimum: 0
+        maximum: 10
+        required: true
+        description: Number of bags
+        example: 2
+      specialRequests:
+        type: string
+        required: false
+        description: Special requests or assistance needed
+        example: "Wheelchair assistance"
+
+  CheckInResponse:
+    type: object
+    properties:
+      paymentID:
+        type: string
+        required: true
+        description: Unique payment identifier for additional services
+        example: "PAY-1AKD7482FAB9STATKO"
+
+  PaymentApprovalRequest:
+    type: object
+    properties:
+      paymentID:
+        type: string
+        required: true
+        description: Payment identifier from check-in response
+        example: "PAY-1AKD7482FAB9STATKO"
+      payerID:
+        type: string
+        required: false
+        description: Alternative payment identifier (accepted for compatibility)
+        example: "STK829AJDK9"
+      paymentStatus:
+        type: string
+        enum: [APPROVED, DECLINED, PENDING]
+        required: true
+        description: Payment approval status
+        example: "APPROVED"
+      paymentMethod:
+        type: string
+        enum: [CREDIT_CARD, DEBIT_CARD, PAYPAL, BANK_TRANSFER]
+        required: true
+        description: Payment method used
+        example: "CREDIT_CARD"
+      amount:
+        type: number
+        minimum: 0
+        required: true
+        description: Payment amount
+        example: 75.00
+      currency:
+        type: string
+        minLength: 3
+        maxLength: 3
+        required: true
+        description: Currency code (ISO 4217)
+        example: "USD"
+      transactionId:
+        type: string
+        required: true
+        description: External transaction identifier
+        example: "TXN-1234567890"
+
+  PaymentApprovalResponse:
+    type: object
+    properties:
+      lastName:
+        type: string
+        required: true
+        description: Passenger's last name
+        example: "Smith"
+      flightDate:
+        type: string
+        required: true
+        description: Flight date (YYYY-MM-DD format)
+        example: "2019-02-14"
+      depart:
+        type: string
+        pattern: ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$
+        required: true
+        description: Departure time
+        example: "14:30:00"
+      boarding:
+        type: string
+        pattern: ^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$
+        required: true
+        description: Boarding time
+        example: "13:15:00"
+      gate:
+        type: string
+        required: true
+        description: Gate number
+        example: "4A"
+      flight:
+        type: string
+        required: true
+        description: Flight number
+        example: "ANY6584"
+      airportDepart:
+        type: string
+        minLength: 3
+        maxLength: 3
+        required: true
+        description: Departure airport code
+        example: "ATL"
+      airportArrive:
+        type: string
+        minLength: 3
+        maxLength: 3
+        required: true
+        description: Arrival airport code
+        example: "SFO"
+      class:
+        type: string
+        required: true
+        description: Seat class
+        example: "Economy"
+      seat:
+        type: string
+        required: true
+        description: Seat number
+        example: "16C"
+      bagsCount:
+        type: integer
+        required: true
+        description: Number of bags
+        example: 2
+      PNR:
+        type: string
+        required: true
+        description: Passenger Name Record
+        example: "928382J"
+
+  ErrorResponse:
+    type: object
+    properties:
+      error:
+        type: string
+        required: true
+        description: Error message
+        example: "Invalid PNR provided"
+      code:
+        type: string
+        required: true
+        description: Error code
+        example: "INVALID_PNR"
+      timestamp:
+        type: string
+        required: true
+        description: Error timestamp (ISO 8601 format)
+        example: "2024-03-15T14:30:00Z"
+
+
+
+/tickets:
+  /{PNR}:
+    uriParameters:
+      PNR:
+        type: string
+        required: true
+        description: Passenger Name Record (PNR) identifier
+        example: "928382J"
+        minLength: 6
+        maxLength: 10
+        pattern: ^[A-Z0-9]+$
+
+    /checkin:
+      put:
+        description: |
+          Check-in a passenger using their PNR (Passenger Name Record). 
+          This endpoint processes the check-in request and returns a payment ID 
+          for any additional services like baggage fees.
+        body:
+          type: CheckInRequest
+          example: |
+            {
+              "lastName": "Smith",
+              "firstName": "John",
+              "email": "john.smith@email.com",
+              "phone": "+1-555-123-4567",
+              "flightNumber": "AA1234",
+              "departureDate": "2024-03-15",
+              "departureTime": "14:30:00",
+              "departureAirport": "ATL",
+              "arrivalAirport": "SFO",
+              "seatClass": "Economy",
+              "numBags": 2,
+              "specialRequests": "Wheelchair assistance"
+            }
+        responses:
+          200:
+            description: Successful check-in
+            body:
+              type: CheckInResponse
+              example: |
+                {
+                  "paymentID": "PAY-1AKD7482FAB9STATKO"
+                }
+          400:
+            description: Bad Request - Invalid input data
+            body:
+              type: ErrorResponse
+              example: |
+                {
+                  "error": "Invalid input data provided",
+                  "code": "INVALID_INPUT",
+                  "timestamp": "2024-03-15T14:30:00Z"
+                }
+          404:
+            description: PNR not found
+            body:
+              type: ErrorResponse
+              example: |
+                {
+                  "error": "PNR not found",
+                  "code": "PNR_NOT_FOUND",
+                  "timestamp": "2024-03-15T14:30:00Z"
+                }
+          500:
+            description: Internal server error
+            body:
+              type: ErrorResponse
+              example: |
+                {
+                  "error": "Internal server error occurred",
+                  "code": "INTERNAL_ERROR",
+                  "timestamp": "2024-03-15T14:30:00Z"
+                }
+
+    /paymentApproval:
+      put:
+        description: |
+          Approve payment for additional services (like baggage fees) and get 
+          updated flight details including boarding pass information.
+        body:
+          type: PaymentApprovalRequest
+          example: |
+            {
+              "paymentID": "PAY-1AKD7482FAB9STATKO",
+              "payerID": "STK829AJDK9",
+              "paymentStatus": "APPROVED",
+              "paymentMethod": "CREDIT_CARD",
+              "amount": 75.00,
+              "currency": "USD",
+              "transactionId": "TXN-1234567890"
+            }
+        responses:
+          200:
+            description: Successful payment approval
+            body:
+              type: PaymentApprovalResponse
+              example: |
+                {
+                  "lastName": "Smith",
+                  "flightDate": "2019-02-14",
+                  "depart": "14:30:00",
+                  "boarding": "13:15:00",
+                  "gate": "4A",
+                  "flight": "ANY6584",
+                  "airportDepart": "ATL",
+                  "airportArrive": "SFO",
+                  "class": "Economy",
+                  "seat": "16C",
+                  "bagsCount": 2,
+                  "PNR": "928382J"
+                }
+          400:
+            description: Bad Request - Invalid payment data
+            body:
+              type: ErrorResponse
+              example: |
+                {
+                  "error": "Invalid payment data provided",
+                  "code": "INVALID_PAYMENT",
+                  "timestamp": "2024-03-15T14:30:00Z"
+                }
+          404:
+            description: Payment ID not found
+            body:
+              type: ErrorResponse
+              example: |
+                {
+                  "error": "Payment ID not found",
+                  "code": "PAYMENT_NOT_FOUND",
+                  "timestamp": "2024-03-15T14:30:00Z"
+                }
+          500:
+            description: Internal server error
+            body:
+              type: ErrorResponse
+              example: |
+                {
+                  "error": "Internal server error occurred",
+                  "code": "INTERNAL_ERROR",
+                  "timestamp": "2024-03-15T14:30:00Z"
+                }
+
+documentation:
+  - title: Overview
+    content: |
+      The Check-in API provides functionality for airline passengers to check-in for their flights
+      and process payments for additional services. The API uses PNR (Passenger Name Record) as
+      the primary identifier for passenger bookings.
+
+  - title: Authentication
+    content: |
+      All API endpoints require Basic Authentication. Include your credentials in the Authorization
+      header using the format: `Authorization: Basic <base64-encoded-credentials>`
+
+  - title: Rate Limiting
+    content: |
+      The API implements rate limiting to ensure fair usage:
+      - 100 requests per minute per API key
+      - 1000 requests per hour per API key
+
+  - title: Error Handling
+    content: |
+      The API uses standard HTTP status codes and returns error details in JSON format.
+      All error responses include an error message, error code, and timestamp.
+
+
+  - title: Examples
+    content: |
+      ## Check-in Flow
+      1. Submit check-in request with passenger details
+      2. Receive payment ID for additional services
+      3. Process payment approval
+      4. Receive boarding pass information
+
+      ## Sample cURL Commands
+      
+      ### Check-in Request
+      ```bash
+      curl -X PUT "https://localhost:8081/api/v1/tickets/928382J/checkin" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Basic <credentials>" \
+        -d '{
+          "lastName": "Smith",
+          "firstName": "John",
+          "email": "john.smith@email.com",
+          "phone": "+1-555-123-4567",
+          "flightNumber": "AA1234",
+          "departureDate": "2024-03-15",
+          "departureTime": "14:30:00",
+          "departureAirport": "ATL",
+          "arrivalAirport": "SFO",
+          "seatClass": "Economy",
+          "numBags": 2,
+          "specialRequests": "Wheelchair assistance"
+        }'
+      ```
+
+      ### Payment Approval
+      ```bash
+      curl -X PUT "https://localhost:8081/api/v1/tickets/928382J/paymentApproval" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Basic <credentials>" \
+        -d '{
+          "paymentID": "PAY-1AKD7482FAB9STATKO",
+          "payerID": "STK829AJDK9",
+          "paymentStatus": "APPROVED",
+          "paymentMethod": "CREDIT_CARD",
+          "amount": 75.00,
+          "currency": "USD",
+          "transactionId": "TXN-1234567890"
+        }'
+      ```
